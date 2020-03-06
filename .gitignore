@@ -1,0 +1,11 @@
+.idea/
+venv/
+proj312/.idea/
+proj312/venv/
+*.DS_Store
+proj312/flaskr/__pycache__/
+<<<<<<< HEAD
+proj312/instance/flaskr.sqlite
+=======
+proj312/flaskr/config.py
+>>>>>>> develop
