@@ -2,14 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="home.css">
 </head>
 <body>
-<h1>I am the homepage</h1>
+<h1>Welcome, Generic User, to [Insert Generic Social Media Site]!</h1>
+<h2> This is a website which will connect you to friends</h2>
+
+<button id="myBtn">Create a Post</button>
+
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p> You can create a text post and even post photos here!</p>
+      <button>Upload an image</button>
+      <input type="text">
+  </div>
+
+</div>
+
+
+
+</div>
+<div id="posts"><ul>
+    <li><h4>Post 1</h4>
+        <button>Upvote</button>
+        <button>Downvote</button>
+    </li>
+    <li><h4>Post 2</h4>
+        <button>Upvote</button>
+        <button>Downvote</button>
+    </li>
+    <li><h4>Post 3</h4>
+        <button>Upvote</button>
+        <button>Downvote</button>
+    </li>
+    <li><h4>Post 4</h4>
+        <button>Upvote</button>
+        <button>Downvote</button>
+    </li>
+    <li><h4>Post 5</h4>
+        <button>Upvote</button>
+        <button>Downvote</button>
+    </li>
+
+
+
+</ul> </div>
+
 
 <li>
     <a href="{{ url_for('friends.friends') }}">Friends    </a>
 </li>
+
+
 </body>
 </html>
 
