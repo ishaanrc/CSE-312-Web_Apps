@@ -17,4 +17,4 @@ EXPOSE 8000
 
 ENTRYPOINT [ "python" ]
 
-CMD [ "app.py" ]
+CMD [ "__init__.py" ]
