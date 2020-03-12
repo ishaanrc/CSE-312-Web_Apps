@@ -18,4 +18,4 @@ EXPOSE 8000
 ENV FLASK_APP=__init__.py
 ENV FLASK_DEBUG=0
 # Run the app
-CMD flask run --port=8000
+CMD flask run --port=8000 --host=0.0.0.0
