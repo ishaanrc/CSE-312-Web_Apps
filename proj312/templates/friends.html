@@ -1,184 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-
-	
-    <title>Friends page</title
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    	body{
-    margin-top:20px;
-    background:#FAFAFA;
-}
-.people-nearby .google-maps{
-  background: #f8f8f8;
-  border-radius: 4px;
-  border: 1px solid #f1f2f2;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.people-nearby .google-maps .map{
-  height: 300px;
-  width: 100%;
-  border: none;
-}
-
-.people-nearby .nearby-user{
-  padding: 20px 0;
-  border-top: 1px solid #f1f2f2;
-  border-bottom: 1px solid #f1f2f2;
-  margin-bottom: 20px;
-}
-
-img.profile-photo-lg{
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-}
-
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="people-nearby">
-              <p><h2> Friends page </p> </h2>
-              <p><a href="{{ url_for('main.home') }}">Go Back to Home Page</a> </p>
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Ishaan Roychowdhury</a></h5>
-                    <p>Student in CSE 312</p>
-
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Manthan Vasavada</a></h5>
-                    <p>Student in CSE 312</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Sample Friend 1</a></h5>
-                    <p>{Insert info about yourself}</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Sample Friend 2</a></h5>
-                    <p>{Insert info about yourself}</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-
-                </div>
-              </div>
-
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Nick Shaffer</a></h5>
-                    <p>TA for CSE 312</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-
-                </div>
-              </div>
-
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Jesse Hartloff</a></h5>
-                    <p>Professor for CSE 312</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="nearby-user">
-                <div class="row">
-                  <div class="col-md-2 col-sm-2">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
-                  </div>
-                  <div class="col-md-7 col-sm-7">
-                    <h5><a href="#" class="profile-link">Dannen Roberts</a></h5>
-                    <p>Student in CSE 312</p>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Add Friend</button>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                    <button class="btn btn-primary pull-right">Message</button>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-    	</div>
-	</div>
+<html>
+  <title> Friends Page</title>
+  <body>
+<p>&nbsp;</p>
+<p><a href="{{ url_for('main.home') }}">Go Back to Home Page</a></p>
+<div>
+<div>
+<table>
+<tbody>
+<tr>
+<th><center>Profile Photo</center></th>
+<th><center>Friend Name</center></th>
+<th><center>Bio</center></th>
+<th><center>Message</center></th>
+<th><center>Add Friend</center></th>
+</tr>
+<tr>
+<td><center><img src="https://img.icons8.com/bubbles/50/000000/man-with-beard-in-green-t-shirt.png" /></center></td>
+<td><center>Jesse Hartloff</center></td>
+<td><center>Professor for 312</center></td>
+<td><center><button> Message </button></center></td>
+<td><center><button> Add Friend </button></center></td>
+</tr>
+<tr>
+<td><center><img src="https://img.icons8.com/bubbles/50/000000/man-with-red-glasses-gem.png" /></center></td>
+<td><center>Ishaan Roychowdhury</center></td>
+<td><center>Student in 312</center></td>
+<td><center><button> Message </button></center></td>
+<td><center><button> Add Friend </button></center></td>
+</tr>
+<tr>
+<td><center><img src="https://img.icons8.com/bubbles/50/000000/man-with-a-compass.png" /></center></td>
+<td><center>Dannen Roberts</center></td>
+<td><center>Student in 312</center></td>
+<td><center><button> Message </button></center></td>
+<td><center><button> Add Friend </button></center></td>
+</tr>
+<tr>
+<td><center><img src="https://img.icons8.com/bubbles/50/000000/man-in-green-glasses-hotel-room.png" /></center></td>
+<td><center>Manthan Vasavada</center></td>
+<td><center>Student in 312</center></td>
+<td><center><button> Message </button></center></td>
+<td><center><button> Add Friend </button></center></td>
+</tr>
+<tr>
+<td><center><img src="https://img.icons8.com/bubbles/50/000000/man-with-sd.png" /></center></td>
+<td><center>Nick Shaffer</center></td>
+<td><center>Student in 312</center></td>
+<td><center><button> Message </button></center></td>
+<td><center><button> Add Friend </button></center></td>
+</tr>
+</tbody>
+</table>
 </div>
-
+</div>
+<div>
+<div>&nbsp;</div>
+</div>
 </body>
 </html>
