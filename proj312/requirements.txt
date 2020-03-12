@@ -1,1 +1,1 @@
-#TODO, figure out requirements for docker submission, likely easier once we're done.
+Flask==1.0.2
