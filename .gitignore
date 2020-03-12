@@ -2,6 +2,7 @@
 venv/
 proj312/.idea/
 proj312/venv/
+proj312/*.pyc
 *.DS_Store
 proj312/__pycache__/
 <<<<<<< HEAD
