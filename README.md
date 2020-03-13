@@ -1,5 +1,5 @@
 ## How to use
-Use https://flask.palletsprojects.com/en/1.1.x/quickstart/ to run app if you are not familiar with flask. Set the FLASK_RUN environment variable to __init__.py
+Use https://flask.palletsprojects.com/en/1.1.x/quickstart/ to run app if you are not familiar with flask. Set the FLASK_RUN environment variable to '__init__.py'
 
 ## Design Philosophy
 Our website is designed for the modern consciensous user. Its designed to be:
