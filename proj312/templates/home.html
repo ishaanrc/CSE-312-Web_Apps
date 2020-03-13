@@ -6,8 +6,30 @@
     <link rel="stylesheet" type="text/css" href="home.css">
 </head>
 <body>
+
+<div>
+
+    <label ><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" required>
+
+    <label><b>Password</b></label>
+    <input type="password" placeholder="Enter Password"required>
+
+    <button type="submit">Login</button>
+    <button type="submit">Register</button>
+
+</div>
+
+<br />
+<li>
+    <a href="{{ url_for('friends.friends') }}">Friends    </a>
+</li>
+<br />
+
 <h1>Welcome, Generic User, to [Insert Generic Social Media Site]!</h1>
 <h2> This is a website which will connect you to friends</h2>
+
+
 
 <button id="myBtn">Create a Post</button>
 
@@ -53,9 +75,7 @@
 </ul> </div>
 
 
-<li>
-    <a href="{{ url_for('friends.friends') }}">Friends    </a>
-</li>
+
 
 
 </body>
