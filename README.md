@@ -1,5 +1,5 @@
 ## How to use
-Use https://flask.palletsprojects.com/en/1.1.x/quickstart/ to run app if you are not familiar with flask. Set the FLASK_RUN environment variable to `__init__.py`
+Use https://flask.palletsprojects.com/en/1.1.x/quickstart/ to run app if you are not familiar with flask.
 * navigate to CSE-312-Web_Apps/flaskr
 * set the environment variable `FLASK_RUN` to `proj312`
 * If its the first time your running the project run `flask init-db` to create the database file
