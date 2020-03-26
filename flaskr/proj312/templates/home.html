@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Home Page</title>
-    <link rel="stylesheet" type="text/css" href="home.css">
 </head>
 <body>
 
@@ -20,6 +19,8 @@
 
 </div>
 
+
+
 <br />
 <li>
     <a href="{{ url_for('friends.friends') }}">Friends    </a>
@@ -30,18 +31,22 @@
 <h2> This is a website which will connect you to friends</h2>
 
 
-
-<button id="myBtn">Create a Post</button>
-
 <div id="myModal" class="modal">
 
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p> You can create a text post and even post photos here!</p>
-      <button>Upload an image</button>
-      <input type="text">
-  </div>
+    <!-- Modal content -->
+    <div class="modal-content">
+            <p> You can create a text post and even post photos here!</p>
+
+        <form method="post" enctype=multipart/form-data>
+            <label for="title">title</label>
+            <input name="title" id="title" required>
+            <label for="image">Image</label>
+            <input type="file" name="image" id="image" required>
+            <input type="submit" value="Post">
+        </form>
+    </div>
+
+    <p> Or feel free to just browse</p>
 
 </div>
 

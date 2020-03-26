@@ -1,6 +1,10 @@
 .idea/
 venv/
-proj312/.idea/
+imageuploads
+*.pyc
+__pycache__/
+instance/
+flaskr/proj312/.idea/
 proj312/venv/
 proj312/*.pyc
 *.DS_Store
