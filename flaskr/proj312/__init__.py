@@ -26,7 +26,7 @@ def create_app(test_config=None):
         pass
 
     try:
-        os.makedirs("imageuploads")
+        os.makedirs("proj312/static")
     except OSError:
         pass
 

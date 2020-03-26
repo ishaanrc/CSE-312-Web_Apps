@@ -6,6 +6,10 @@
 </head>
 <body>
 
+{% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+
 <div>
 
     <label ><b>Username</b></label>
@@ -35,9 +39,9 @@
 
     <!-- Modal content -->
     <div class="modal-content">
-            <p> You can create a text post and even post photos here!</p>
+        <p> You can create a text post and even post photos here!</p>
 
-        <form method="post" enctype=multipart/form-data>
+        <form method="post" enctype=multipart/form-data action="/upload">
             <label for="title">title</label>
             <input name="title" id="title" required>
             <label for="image">Image</label>
@@ -50,40 +54,22 @@
 
 </div>
 
+<div id="posts">
+    <ul>
+        {% for post in posts %}
+
+            <li>
+                <h2>{{post['title']}}</h2>
+                <img src="/static/{{post['image']}}" width="480">
+                <br>
+                <button>Upvote</button>
+                <button>Downvote</button>
+                <h4>Comments:</h4>
+            </li>
 
 
+        {% endfor %}
+    </ul>
 </div>
-<div id="posts"><ul>
-    <li><h4>Post 1</h4>
-        <button>Upvote</button>
-        <button>Downvote</button>
-    </li>
-    <li><h4>Post 2</h4>
-        <button>Upvote</button>
-        <button>Downvote</button>
-    </li>
-    <li><h4>Post 3</h4>
-        <button>Upvote</button>
-        <button>Downvote</button>
-    </li>
-    <li><h4>Post 4</h4>
-        <button>Upvote</button>
-        <button>Downvote</button>
-    </li>
-    <li><h4>Post 5</h4>
-        <button>Upvote</button>
-        <button>Downvote</button>
-    </li>
-
-
-
-</ul> </div>
-
-
-
-
-
-</body>
-</html>
 
 <!-- TODO: Add UI for main page, posts, upvotes, that sort of thing-->

@@ -1,11 +1,14 @@
 .idea/
 venv/
 imageuploads
+static
+flaskr/proj312/static/
 *.pyc
 __pycache__/
 instance/
 flaskr/proj312/.idea/
 proj312/venv/
+proj312/static
 proj312/*.pyc
 *.DS_Store
 proj312/__pycache__/

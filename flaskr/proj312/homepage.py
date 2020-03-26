@@ -7,15 +7,23 @@ from proj312.database import get_db
 
 bp = Blueprint('main', __name__)
 
-UPLOAD_FOLDER = 'imageuploads'
+UPLOAD_FOLDER = 'proj312/static'
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 
 @bp.route('/')
 def home():
-    return render_template('home.html')
+    db = get_db()
+    temp = db.execute(
+        'SELECT * FROM post ORDER BY created desc LIMIT 10'
+    ).fetchall()
+    return render_template('home.html', posts=temp)
 
 
-@bp.route('/', methods=('GET', 'POST'))
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@bp.route('/upload', methods=('GET', 'POST'))
 def post():
     if request.method == 'POST':
         print(request.form)
@@ -27,17 +35,19 @@ def post():
 
         if not title:
             error = "Please include a title"
-        elif '<' in title or '>' in title or '&' in title:
+        elif '<' in title or '>' in title or '&' in title or ';' in title:
             error = "Please don't use a banned character"
         elif not image:
             error = "Please select an image"
-
+        elif not allowed_file(image.filename):
+            error = "Not allowed file"
         if error is None:
-            imagename = secure_filename(image.filename)
-            image.save(os.path.join(UPLOAD_FOLDER, imagename))
+            direc_size = len(os.listdir(UPLOAD_FOLDER))
+            image_name = str(direc_size) + "." + image.filename.rsplit('.', 1)[1].lower()
+            image.save(os.path.join(UPLOAD_FOLDER, image_name))
             db.execute(
                 'INSERT INTO post (title, image) VALUES (?, ?)',
-                (title, imagename)
+                (title, image_name)
             )
             db.commit()
 
@@ -50,6 +60,6 @@ def post():
                 print(thing["title"] + " " + thing["image"])
             # End code that prints out the contents of the db
 
-            return render_template('home.html')
+            return redirect(url_for("main.home"))
         flash(error)
-    return render_template('home.html')
+    return redirect(url_for("main.home"))
