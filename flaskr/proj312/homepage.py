@@ -14,7 +14,7 @@ ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 def home():
     db = get_db()
     temp = db.execute(
-        'SELECT * FROM post ORDER BY created desc LIMIT 10'
+        'SELECT * FROM post ORDER BY votes desc LIMIT 10'
     ).fetchall()
     return render_template('home.html', posts=temp)
 
@@ -22,6 +22,7 @@ def home():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @bp.route('/upload', methods=('GET', 'POST'))
 def post():
@@ -63,3 +64,77 @@ def post():
             return redirect(url_for("main.home"))
         flash(error)
     return redirect(url_for("main.home"))
+
+
+@bp.route('/upvote', methods=('GET', 'POST'))
+def upvote():
+    if request.method == 'POST':
+        #print(request.upvote)
+        upvote = request.form['upvote']
+        pid = request.form['postid']
+        error = None
+        db = get_db()
+
+        if upvote != '1' and upvote != 1:
+            error = "upvote not cast"
+        if error == None:
+            db.execute(
+                'UPDATE post SET votes = votes + 1 WHERE id = (?)',pid
+            )
+            #db.commit()
+
+            db.execute(
+                'SELECT * FROM post ORDER BY votes'
+            )
+            db.commit()
+            return redirect(url_for("main.home"))
+        flash(error)
+    return redirect(url_for("main.home"))
+
+
+@bp.route('/downvote', methods=('GET', 'POST'))
+def downvote():
+    if request.method == 'POST':
+        #sprint(request.downvote)
+        upvote = request.form['downvote']
+        pid = request.form['postid']
+        error = None
+        db = get_db()
+
+        if upvote != '-1' and  upvote != -1:
+            error = "Downvote Not Cast"
+        if error == None:
+            db.execute(
+                'UPDATE post SET votes = votes - 1 WHERE id = (?)',pid
+            )
+            #db.commit()
+            db.execute(
+                'SELECT * FROM post ORDER BY votes'
+            )
+            db.commit()
+
+            return redirect(url_for("main.home"))
+        flash(error)
+    return redirect(url_for("main.home"))
+
+
+
+
+# @bp.route('/uploadcomment', methods = ('GET', 'POST'))
+# def comment():
+#     if request.method == 'POST':
+#         print(request.comment)
+#         comment = request.comment
+#         print(request.postid)
+#         id = request.postid
+#
+#         error = None
+#         db = get_db()
+#
+#         if not comment:
+#             error = "Comment can't be blank."
+#         if error is None:
+#             db.execute(
+#
+#             )
+
