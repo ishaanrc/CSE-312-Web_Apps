@@ -86,13 +86,9 @@
                     <input type="submit" value="Comment">
                 </form>
                 <div id="comments">
-                    {% for comment in comment %}
-                        {% if comment.id == post.id  %}
-                            <h1>hi</h1>
-                        
-                        {% endif %}
-                        
-                        <h2>{{ comment['id'] }}</h2>
+                    {% for comment in post['comments'] %}
+
+                        <h2>{{ comment['comment'] }}</h2>
                     {% endfor %}
 
 

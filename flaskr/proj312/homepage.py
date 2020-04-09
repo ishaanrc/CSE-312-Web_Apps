@@ -16,41 +16,22 @@ ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 def home():
     db = get_db()
 
-    temp = db.execute('SELECT * FROM post ORDER BY votes desc LIMIT 10').fetchall()
+    the_posts = db.execute('SELECT * FROM post ORDER BY votes desc LIMIT 10').fetchall()
+    new_list_of_dics = []
 
-    for post in temp:
-        x = post['id']
-        sql_statement = 'SELECT * FROM comment WHERE id = (?);'
-        listOfDicts = db.execute(sql_statement, (x,)).fetchall()
-        g = listOfDicts
+    for row in the_posts:
+        temp = {}
+        temp['id'] = row['id']
+        temp['created'] = row['created']
+        temp['title'] = row['title']
+        temp['image'] = row['image']
+        temp['votes'] = row['votes']
+        temp['comments'] = db.execute('SELECT * FROM comment WHERE id = (?)', str((temp['id']))).fetchall()
+        new_list_of_dics.append(temp)
 
-        # def dict_factory(cursor, row):
-        #     d = {}
-        #     for idx, col in enumerate(cursor.description):
-        #         d[col[0]] = row[idx]
-        #     return d
-        #
-        # con = sqlite3.connect(":memory:")
-        # con.row_factory = dict_factory()
-        # cur = con.cursor()
-        #
-        #
-        # for rows in listOfDicts:
-        #     print(rows)
+    print(new_list_of_dics)
 
-        # hi: List[Any] = []
-        #
-        #
-        #
-        # for i in listOfDicts:
-        #     hi.append(i['comment'])
-
-        #post.update({'comments' : hi})
-
-
-
-
-    return render_template('home.html', posts=temp)
+    return render_template('home.html', posts=new_list_of_dics)
 
 
 def allowed_file(filename):
@@ -61,8 +42,6 @@ def allowed_file(filename):
 @bp.route('/upload', methods=('GET', 'POST'))
 def post():
     if request.method == 'POST':
-        print(request.form)
-        print(request.files)
         title = request.form['title']
         image = request.files['image']
         db = get_db()
@@ -139,7 +118,7 @@ def downvote():
             error = "Downvote Not Cast"
         if error == None:
             db.execute(
-                'UPDATE post SET votes = votes - 1 WHERE id = (?)',pid
+                'UPDATE post SET votes = votes - 1 WHERE id = (?)', pid
             )
             #db.commit()
             db.execute(
