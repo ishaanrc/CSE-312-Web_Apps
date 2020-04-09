@@ -18,18 +18,8 @@ def home():
 
     the_posts = db.execute('SELECT * FROM post ORDER BY votes desc LIMIT 10').fetchall()
     new_list_of_dics = []
-
     for row in the_posts:
-        temp = {}
-        temp['id'] = row['id']
-        temp['created'] = row['created']
-        temp['title'] = row['title']
-        temp['image'] = row['image']
-        temp['votes'] = row['votes']
-        temp['comments'] = db.execute('SELECT * FROM comment WHERE id = (?)', str((temp['id']))).fetchall()
-        new_list_of_dics.append(temp)
-
-    print(new_list_of_dics)
+        new_list_of_dics.append((row, db.execute('SELECT * FROM comment WHERE id = (?)', str((row['id']))).fetchall()))
 
     return render_template('home.html', posts=new_list_of_dics)
 
