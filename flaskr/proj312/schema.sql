@@ -8,3 +8,8 @@ CREATE TABLE post (
   votes INTEGER DEFAULT 0
 );
 
+create TABLE comment (
+    id INTEGER,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    comment TEXT NOT NULL
+);

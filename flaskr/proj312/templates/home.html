@@ -56,6 +56,7 @@
     <ul>
         {% for post in posts %}
             <li>
+                <h1>{{ post.id }}</h1>
                 <h2>{{post['title']}}</h2>
                 <img src="/static/{{post['image']}}" width="480">
                 <br><br>
@@ -84,7 +85,20 @@
                     <input type="hidden" name="postid" id="postid" value="{{ post['id']}}">
                     <input type="submit" value="Comment">
                 </form>
-                <h4>Comments:</h4>
+                <div id="comments">
+                    {% for comment in comment %}
+                        {% if comment.id == post.id  %}
+                            <h1>hi</h1>
+                        
+                        {% endif %}
+                        
+                        <h2>{{ comment['id'] }}</h2>
+                    {% endfor %}
+
+
+                </div>
+
+
             </li>
         {% endfor %}
     </ul>
