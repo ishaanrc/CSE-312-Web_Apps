@@ -43,6 +43,8 @@ def create_app(test_config=None):
 
     from . import homepage
     app.register_blueprint(homepage.bp)
+    if __name__ == '__main__':
+        app.run(threaded=True)
 
 
     return app
