@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Home Page</title>
 </head>
+
+<script src='long_polling.js'>
+</script>
+
 <body>
 
 {% for message in get_flashed_messages() %}
@@ -32,7 +36,8 @@
 <h1>Welcome, Generic User, to [Insert Generic Social Media Site]!</h1>
 <h2> This is a website which will connect you to friends</h2>
 
-
+<div id = "Long_Poll">
+<meta http-equiv="refresh" content="2">
 <div id="myModal" class="modal">
 
     <!-- Modal content -->
@@ -99,7 +104,6 @@
         {% endfor %}
     </ul>
 </div>
+</div>
 </body>
 </html>
-
-<!-- TODO: Add UI for main page, posts, upvotes, that sort of thing-->
