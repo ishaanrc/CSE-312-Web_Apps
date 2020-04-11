@@ -5,7 +5,93 @@
     <title>Home Page</title>
 </head>
 
-<script src='long_polling.js'>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io();
+    console.log("Socket Created")
+
+    const sleep = (milliseconds) => {return new Promise(resolve => setTimeout(resolve, milliseconds))}
+
+    function alertNewPost() {
+        sleep(500).then(() => {
+            socket.emit('post update', {});
+        })
+    }
+
+    function vote(id, val) {
+            socket.emit('vote', {"id": id, "val": val});
+    }
+
+    function SendThisComment(id) {
+        let commentBox = document.getElementById("comment"+id);
+        let comment = commentBox.value;
+        console.log(comment);
+        socket.emit('comment', {"id": id, "comment": comment});
+    }
+
+
+    function simplePost(){
+        const formElement = document.getElementById("mainForm");
+        const formData = new FormData(formElement);
+
+        const request = new XMLHttpRequest();
+
+        request.open("POST", "upload", true);
+        request.send(formData);
+
+        alertNewPost();
+    }
+
+    socket.on('update received', function(msg) {
+        console.log(msg);
+
+        let newPost = "<li>\n" +
+            "                <h1>"+  msg.id   +"</h1>\n" +
+            "                <h2>"+  msg.title  +"</h2>\n" +
+            "                <img src=\"/static/"+  msg.image  +"\" width=\"480\">\n" +
+            "                <br><br>\n" +
+            "<form onsubmit=\"vote( "+msg.id+" , 1);return false;\">\n" +
+            "                    <input type=\"Submit\" value=\"Upvote\">\n" +
+            "                </form>\n" +
+            "\n" +
+            "                <form onsubmit=\"vote("+msg.id+", -1);return false;\">\n" +
+            "                    <input type=\"Submit\" value=\"Downvote\">\n" +
+            "                </form>\n" +
+            "\n" +
+            "                <h3> Vote Score is: </h3> <h2 id=\"vote"+msg.id+"\">0</h2>\n" +
+            "\n" +
+            "                <br><br>\n" +
+            "\n" +
+            "                <form onsubmit=\"SendThisComment("+msg.id+");return false;\">\n" +
+            "                    <label for=\"comment!\">Comment on the Post!</label>\n" +
+            "                    <input name=\"comment!\" id=\"comment"+msg.id+"\" required>\n" +
+            "                    <input type=\"Submit\" value=\"Comment\">\n" +
+            "                </form>\n" +
+            "\n" +
+            "                <div id=\"comments"+msg.id+"\">\n" +
+            "\n" +
+            "\n" +
+            "                </div>"+
+            "</li>"
+
+        let thePosts = document.getElementById("posts");
+        thePosts.innerHTML = newPost + thePosts.innerHTML
+    })
+
+    socket.on('vote received', function(msg) {
+        let voteCount = document.getElementById("vote"+msg.id);
+        voteCount.innerHTML = msg.vote;
+
+        console.log(msg);
+    })
+
+    socket.on('comment received', function(msg){
+        let comments = document.getElementById("comments"+msg.id);
+        comments.innerHTML = "<h2>"+msg.comment+"</h2>"+comments.innerHTML
+
+    })
+
+
 </script>
 
 <body>
@@ -37,14 +123,14 @@
 <h2> This is a website which will connect you to friends</h2>
 
 <div id = "Long_Poll">
-<meta http-equiv="refresh" content="2">
+
 <div id="myModal" class="modal">
 
     <!-- Modal content -->
     <div class="modal-content">
         <p> You can create a text post and even post photos here!</p>
 
-        <form method="post" enctype=multipart/form-data action="/upload">
+        <form method="post" enctype=multipart/form-data id="mainForm" onsubmit="simplePost();return false;">
             <label for="title">title</label>
             <input name="title" id="title" required>
             <label for="image">Image</label>
@@ -57,8 +143,8 @@
 
 </div>
 
-<div id="posts">
-    <ul>
+<div>
+    <ul id="posts">
         {% for post in posts %}
             <li>
                 <h1>{{ post[0].id }}</h1>
@@ -66,31 +152,25 @@
                 <img src="/static/{{post[0]['image']}}" width="480">
                 <br><br>
 
-                <form method = "post" enctype="multipart/form-data" action="/upvote">
-
-                    <input type="hidden" name="postid" id="postid" value="{{ post[0]['id']}}">
-                    <input type = "hidden" name = "upvote" id="upvote" value="1">
+                <form onsubmit="vote({{ post[0]['id'] }}, 1);return false;">
                     <input type="Submit" value="Upvote">
                 </form>
-                <form method = "post" enctype="multipart/form-data" action="/downvote">
-                    <input type="hidden" name="postid" id="postid" value="{{ post[0]['id']}}">
-                    <input type = "hidden" name = "downvote" id="downvote" value="-1">
+
+                <form onsubmit="vote({{ post[0]['id'] }}, -1);return false;">
                     <input type="Submit" value="Downvote">
                 </form>
 
-                <h3> Vote Score is: {{post[0]['votes']}}</h3>
+                <h3> Vote Score is: </h3> <h2 id="vote{{ post[0]['id'] }}">{{post[0]['votes']}}</h2>
 
-{#                <button>Upvote</button>#}
-{#                <button>Downvote</button>#}
                 <br><br>
 
-                <form method="post" enctype="multipart/form-data" action="/uploadcomment">
-                    <label for="comment">Comment on the Post!</label>
-                    <input name="comment" id="comment" required>
-                    <input type="hidden" name="postid" id="postid" value="{{ post[0]['id']}}">
-                    <input type="submit" value="Comment">
+                <form onsubmit="SendThisComment({{ post[0]['id'] }});return false;">
+                    <label for="comment!">Comment on the Post!</label>
+                    <input name="comment!" id="comment{{ post[0]['id'] }}" required>
+                    <input type="Submit" value="Comment">
                 </form>
-                <div id="comments">
+
+                <div id="comments{{ post[0]['id'] }}">
                     {% for comment in post[1] %}
 
                         <h2>{{ comment['comment'] }}</h2>

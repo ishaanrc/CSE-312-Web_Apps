@@ -1,10 +1,8 @@
 import os
-import sqlite3
-from typing import List, Any
 
 from flask import (Blueprint, flash, g, session, redirect, render_template, request, url_for)
-from werkzeug.utils import secure_filename
-
+from flask_socketio import SocketIO, emit
+from . import socketio
 from proj312.database import get_db
 
 bp = Blueprint('main', __name__)
@@ -16,10 +14,11 @@ ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg'])
 def home():
     db = get_db()
 
-    the_posts = db.execute('SELECT * FROM post ORDER BY votes desc LIMIT 10').fetchall()
+    the_posts = db.execute('SELECT * FROM post ORDER BY created desc LIMIT 9').fetchall()
     new_list_of_dics = []
     for row in the_posts:
-        new_list_of_dics.append((row, db.execute('SELECT * FROM comment WHERE id = (?)', str((row['id']))).fetchall()))
+        print(str(row['id']))
+        new_list_of_dics.append((row, db.execute('SELECT * FROM comment WHERE id = (?)', (str((row['id'])), )).fetchall()))
 
     return render_template('home.html', posts=new_list_of_dics)
 
@@ -28,6 +27,44 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+@socketio.on('post update')
+def distribute_post(message):
+    db = get_db()
+    this_post = db.execute('SELECT * FROM post ORDER BY created desc LIMIT 1').fetchone()
+    print(this_post)
+
+    print("Made it here")
+    emit('update received', {'id': str(this_post['id']),
+                             'title': this_post['title'],
+                             'image': this_post['image'],
+                             "votes": str(this_post['votes'])}, broadcast=True)
+
+
+@socketio.on('vote')
+def distribute_vote(message):
+    db = get_db()
+    print(type(message['val']), message['val'])
+    db.execute(
+        'UPDATE post SET votes = votes + (?) WHERE id = (?)', (message['val'], message['id'])
+    )
+    db.commit()
+    new_vote_count = db.execute('SELECT * FROM post WHERE id = (?)', (message['id'],)).fetchone()
+    emit('vote received', {'id': message['id'],
+                           "vote": new_vote_count['votes']}, broadcast=True)
+    print("new_vote_count:", new_vote_count['votes'])
+
+
+@socketio.on('comment')
+def distribute_comment(message):
+    db = get_db()
+    db.execute(
+        'INSERT INTO comment (id, comment) VALUES (?, ?)',
+        (message['id'], message['comment'])
+    )
+    db.commit()
+    emit('comment received', {'id': message['id'],
+                           "comment": message['comment']}, broadcast=True)
 
 @bp.route('/upload', methods=('GET', 'POST'))
 def post():
@@ -64,9 +101,9 @@ def post():
                 print(thing["title"] + " " + thing["image"])
             # End code that prints out the contents of the db
 
-            return redirect(url_for("main.home"))
+            return "Ok"
         flash(error)
-    return redirect(url_for("main.home"))
+    return "Not Ok"
 
 
 @bp.route('/upvote', methods=('GET', 'POST'))
@@ -82,7 +119,7 @@ def upvote():
             error = "upvote not cast"
         if error == None:
             db.execute(
-                'UPDATE post SET votes = votes + 1 WHERE id = (?)',pid
+                'UPDATE post SET votes = votes + 1 WHERE id = (?)',(pid,)
             )
             #db.commit()
 
