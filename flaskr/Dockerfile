@@ -1,12 +1,9 @@
-FROM ubuntu:18.04
+FROM python:3.8.2
 RUN apt-get update
 # Set the home directory to /root
 ENV HOME /root
 # cd into the home directory
 WORKDIR /root
-# Install Node
-RUN apt-get update -y && \
-    apt-get install -y python-pip python-dev
 # Copy all app files into the image
 COPY . .
 # Download dependancies
@@ -15,7 +12,7 @@ RUN pip install -r requirements.txt
 # from outside the container
 
 EXPOSE 8000
-ENV FLASK_APP=__init__.py
-ENV FLASK_DEBUG=0
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
 # Run the app
-CMD flask run --port=8000 --host=0.0.0.0
+CMD /wait && python wsgi.py

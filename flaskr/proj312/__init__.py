@@ -5,7 +5,7 @@ from flask_socketio import SocketIO
 from . import database
 
 socketio = SocketIO()
-db: database.Database = None
+db = None
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)

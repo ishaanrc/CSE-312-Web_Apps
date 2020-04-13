@@ -1,12 +1,13 @@
+import os
 import sqlite3
 import pymysql
 
 
 class Database:
     def __init__(self):
-        self.con = pymysql.connect(host='localhost',
+        self.con = pymysql.connect(host='db',
                                    user='root',
-                                   password='password',
+                                   password=os.getenv('MYSQL_PASSWORD'),
                                    db='database',
                                    charset='utf8mb4',
                                    cursorclass=pymysql.cursors.DictCursor)
