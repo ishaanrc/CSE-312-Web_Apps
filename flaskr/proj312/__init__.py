@@ -2,15 +2,14 @@ import os
 
 from flask import Flask
 from flask_socketio import SocketIO
+from . import database
 
 socketio = SocketIO()
+db: database.Database = None
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
+
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -30,15 +29,14 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import database
-    database.init_app(app)
+    global db
+    db = database.Database()
 
     from . import friends
     app.register_blueprint(friends.bp)
 
     from . import homepage
     app.register_blueprint(homepage.bp)
-
 
     socketio.init_app(app)
     return app

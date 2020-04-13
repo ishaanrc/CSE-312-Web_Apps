@@ -46,8 +46,7 @@
         console.log(msg);
 
         let newPost = "<li>\n" +
-            "                <h1>"+  msg.id   +"</h1>\n" +
-            "                <h2>"+  msg.title  +"</h2>\n" +
+            "                <h1>"+  msg.title  +"</h1>\n" +
             "                <img src=\"/static/"+  msg.image  +"\" width=\"480\">\n" +
             "                <br><br>\n" +
             "<form onsubmit=\"vote( "+msg.id+" , 1);return false;\">\n" +
@@ -64,11 +63,13 @@
             "\n" +
             "                <form onsubmit=\"SendThisComment("+msg.id+");return false;\">\n" +
             "                    <label for=\"comment!\">Comment on the Post!</label>\n" +
+            "<br>" +
             "                    <input name=\"comment!\" id=\"comment"+msg.id+"\" required>\n" +
+            "<br>" +
             "                    <input type=\"Submit\" value=\"Comment\">\n" +
             "                </form>\n" +
             "\n" +
-            "                <div id=\"comments"+msg.id+"\">\n" +
+            "                <div style=\"width: 480px\" id=\"comments"+msg.id+"\">\n" +
             "\n" +
             "\n" +
             "                </div>"+
@@ -94,6 +95,14 @@
 
 </script>
 
+<style>
+input {
+  padding: 0.2em;
+  box-sizing: border-box;
+  width: 480px;
+}
+</style>
+
 <body>
 
 {% for message in get_flashed_messages() %}
@@ -101,12 +110,13 @@
 {% endfor %}
 
 <div>
-    <label ><b>Username</b></label>
+    <label><b>Username</b></label>
     <input type="text" placeholder="Enter Username" required>
-
+    <br>
+    <br>
     <label><b>Password</b></label>
     <input type="password" placeholder="Enter Password"required>
-
+    <br>
     <button type="submit">Login</button>
     <button type="submit">Register</button>
 </div>
@@ -119,10 +129,9 @@
 </li>
 <br />
 
-<h1>Welcome, Generic User, to [Insert Generic Social Media Site]!</h1>
+<h1>Welcome, Generic User, to sharelify!</h1>
 <h2> This is a website which will connect you to friends</h2>
 
-<div id = "Long_Poll">
 
 <div id="myModal" class="modal">
 
@@ -131,10 +140,12 @@
         <p> You can create a text post and even post photos here!</p>
 
         <form method="post" enctype=multipart/form-data id="mainForm" onsubmit="simplePost();return false;">
-            <label for="title">title</label>
+            <label for="title">Title</label>
             <input name="title" id="title" required>
+            <br>
             <label for="image">Image</label>
             <input type="file" name="image" id="image" required>
+            <br>
             <input type="submit" value="Post">
         </form>
     </div>
@@ -147,8 +158,7 @@
     <ul id="posts">
         {% for post in posts %}
             <li>
-                <h1>{{ post[0].id }}</h1>
-                <h2>{{post[0]['title']}}</h2>
+                <h1>{{post[0]['title']}}</h1>
                 <img src="/static/{{post[0]['image']}}" width="480">
                 <br><br>
 
@@ -166,11 +176,13 @@
 
                 <form onsubmit="SendThisComment({{ post[0]['id'] }});return false;">
                     <label for="comment!">Comment on the Post!</label>
+                    <br>
                     <input name="comment!" id="comment{{ post[0]['id'] }}" required>
+                    <br>
                     <input type="Submit" value="Comment">
                 </form>
 
-                <div id="comments{{ post[0]['id'] }}">
+                <div style="width: 480px" id="comments{{ post[0]['id'] }}">
                     {% for comment in post[1] %}
 
                         <h2>{{ comment['comment'] }}</h2>
