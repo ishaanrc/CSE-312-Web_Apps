@@ -4,7 +4,7 @@ Use https://flask.palletsprojects.com/en/1.1.x/quickstart/ to run app if you are
 * run: sudo docker-compose up -d
 * You will need docker and docker-compose installed
 * It could take a little while to spin up the first time, dont panick if the website doesn't run immediately
-* If you can get docker working but want to run the website you could just run wsgi.py but this will require you having an instance of mysql running with an appropriatly named db, and will require you to change the parameters in the database.py file
+* If you can't get docker working but want to run the website you could just run wsgi.py but this will require you having an instance of mysql running with an appropriatly named db, and will require you to change the parameters in the database.py file
 
 ## Design Philosophy
 Our website is designed for the modern consciensous user. Its designed to be:
