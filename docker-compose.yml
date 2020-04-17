@@ -7,16 +7,14 @@ services:
        - db_data:/var/lib/mysql
      restart: always
      environment:
-       MYSQL_ROOT_PASSWORD: password
+       MYSQL_ROOT_PASSWORD: changeme
        MYSQL_DATABASE: database
-       MYSQL_USER: user
-       MYSQL_PASSWORD: password
 
    app:
      build: ./flaskr
      environment:
        WAIT_HOSTS: db:3306
-       MYSQL_PASSWORD: password
+       MYSQL_PASSWORD: changeme
      ports:
        - '8000:8000'
     
