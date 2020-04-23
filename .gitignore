@@ -10,6 +10,7 @@ flaskr/proj312/.idea/
 proj312/venv/
 proj312/static
 proj312/*.pyc
+flaskr/proj312/test.py
 *.DS_Store
 proj312/__pycache__/
 <<<<<<< HEAD

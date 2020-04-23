@@ -124,35 +124,37 @@ hr {
     <div class="flash">{{ message }}</div>
 {% endfor %}
 
-<div>
-    <label><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" required>
-    <br>
-    <br>
-    <label><b>Password</b></label>
-    <input type="password" placeholder="Enter Password"required>
-    <br>
-    <button type="submit">Login</button>
-    <button type="submit">Register</button>
-</div>
+<h1>{{ greeting_text }}</h1>
 
-<li>
-    <a href="{{ url_for('log.register') }}">Authorize    </a>
-</li>
+{% if bool_logged_in == False %}
+
+    <li>
+        <a href="{{ url_for('log.register') }}">Register</a>
+    </li>
+
+    <li>
+        <a href="{{ url_for('log.login') }}">Login</a>
+    </li>
+
+{% else %}
+    <li>
+        <a href="{{ url_for('friends.friends') }}">Friends    </a>
+    </li>
+    <li>
+        <a href="{{ url_for('log.logout') }}">Logout</a>
+    </li>
+{% endif %}
+
+<hr>
+
 
 <br />
-<li>
-    <a href="{{ url_for('friends.friends') }}">Friends    </a>
-</li>
-<br />
 
-<h1>Welcome, Generic User, to sharelify!</h1>
 <h2> This is a website which will connect you to friends</h2>
 
 
 <div id="myModal" class="modal">
 
-    <!-- Modal content -->
     <div class="modal-content">
         <p> You can create a text post and even post photos here!</p>
 

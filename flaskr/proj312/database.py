@@ -38,10 +38,22 @@ class Database:
         self.cur.execute(self.comment_table)
         self.cur.execute(self.user_table)
 
+    def get_user_account_by_id(self, id):
+        query = "SELECT * FROM user WHERE id = (%s)"
+        self.cur.execute(query, (id,))
+        ret = self.cur.fetchone()
+        return ret
+
     def check_if_username_available(self, username: str):
         query = "SELECT * FROM user where username = (%s)"
         self.cur.execute(query, (username,))
         ret = self.cur.fetchall()
+        return ret
+
+    def get_user_account(self, username: str):
+        query = "SELECT * FROM user where username = (%s)"
+        self.cur.execute(query, (username,))
+        ret = self.cur.fetchone()
         return ret
 
     def add_user(self, username: str, hashed_password: str):

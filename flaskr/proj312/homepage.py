@@ -4,7 +4,7 @@ from flask import (Blueprint, flash, render_template, request)
 from flask_socketio import emit
 from . import socketio
 from . import db
-
+from flask import g
 bp = Blueprint('main', __name__)
 
 UPLOAD_FOLDER = 'proj312/static'
@@ -18,7 +18,14 @@ def home():
     for row in the_posts:
         print(str(row['id']))
         new_list_of_dics.append((row, db.get_posts_comments(row['id'])))
-    return render_template('home.html', posts=new_list_of_dics)
+
+    greeting_text = "Hello, Please Login"
+    bool_logged_in = False
+    if g.user is not None:
+        greeting_text = "Welcome, "+g.user['username']
+        bool_logged_in = True
+    return\
+        render_template('home.html', posts=new_list_of_dics, greeting_text=greeting_text, bool_logged_in=bool_logged_in)
 
 
 def allowed_file(filename):
