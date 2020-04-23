@@ -5,28 +5,49 @@ import pymysql
 
 class Database:
     def __init__(self):
-        self.con = pymysql.connect(host='db',
+        self.con = pymysql.connect(host='localhost',
                                    user='root',
-                                   password=os.getenv('MYSQL_PASSWORD'),
-                                   db='database',
+                                   password='sesame24',
+                                   db='db',
                                    charset='utf8mb4',
                                    cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.con.cursor()
 
         self.post_table = "CREATE TABLE IF NOT EXISTS post(" \
-                     "id INT(11) NOT NULL AUTO_INCREMENT, " \
-                     "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
-                     "title VARCHAR(255) NOT NULL," \
-                     "image VARCHAR(24) NOT NULL," \
-                     "votes INT(24) NOT NULL DEFAULT 0," \
-                     "primary key (id))"
+                          "id INT(11) NOT NULL AUTO_INCREMENT, " \
+                          "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
+                          "title VARCHAR(255) NOT NULL," \
+                          "image VARCHAR(24) NOT NULL," \
+                          "votes INT(24) NOT NULL DEFAULT 0," \
+                          "primary key (id))"
 
         self.comment_table = "CREATE TABLE IF NOT EXISTS comment(" \
-                        "id INT(11) NOT NULL, " \
-                        "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
-                        "comment VARCHAR(5000) NOT NULL)"
+                             "id INT(11) NOT NULL, " \
+                             "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
+                             "comment VARCHAR(5000) NOT NULL)"
+
+        self.user_table = "CREATE TABLE IF NOT EXISTS user (" \
+                          "id INT(11) NOT NULL AUTO_INCREMENT," \
+                          "username VARCHAR(24) NOT NULL," \
+                          "password VARCHAR(124) NOT NULL," \
+                          "primary key (id))"
+
+        self.vote_table = None
+
         self.cur.execute(self.post_table)
         self.cur.execute(self.comment_table)
+        self.cur.execute(self.user_table)
+
+    def check_if_username_available(self, username: str):
+        query = "SELECT * FROM user where username = (%s)"
+        self.cur.execute(query, (username,))
+        ret = self.cur.fetchall()
+        return ret
+
+    def add_user(self, username: str, hashed_password: str):
+        query = "INSERT INTO user (username, password) VALUES (%s, %s)"
+        self.cur.execute(query, (username, hashed_password))
+        self.con.commit()
 
     def insert_post(self, title: str, image: str):
         query = "INSERT INTO post (title, image) VALUES (%s, %s)"

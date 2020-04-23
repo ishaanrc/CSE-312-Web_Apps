@@ -2,10 +2,12 @@ import os
 
 from flask import Flask
 from flask_socketio import SocketIO
+
+from proj312.database import Database
 from . import database
 
 socketio = SocketIO()
-db = None
+db: Database = None
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -37,6 +39,9 @@ def create_app(test_config=None):
 
     from . import homepage
     app.register_blueprint(homepage.bp)
+
+    from . import log
+    app.register_blueprint(log.bp)
 
     socketio.init_app(app)
     return app
