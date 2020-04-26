@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import pymysql
+from flask import g
 
 
 class Database:
@@ -14,16 +15,17 @@ class Database:
         self.cur = self.con.cursor()
 
         self.post_table = "CREATE TABLE IF NOT EXISTS post(" \
-                          "id INT(11) NOT NULL AUTO_INCREMENT, " \
+                          "id INT(11) NOT NULL AUTO_INCREMENT," \
                           "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
                           "title VARCHAR(255) NOT NULL," \
                           "image VARCHAR(24) NOT NULL," \
-                          "votes INT(24) NOT NULL DEFAULT 0," \
+                          "username VARCHAR(80) NOT NULL," \
                           "primary key (id))"
 
         self.comment_table = "CREATE TABLE IF NOT EXISTS comment(" \
                              "id INT(11) NOT NULL, " \
-                             "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
+                             "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP," \
+                             "username VARCHAR(80), " \
                              "comment VARCHAR(5000) NOT NULL)"
 
         self.user_table = "CREATE TABLE IF NOT EXISTS user (" \
@@ -32,11 +34,17 @@ class Database:
                           "password VARCHAR(124) NOT NULL," \
                           "primary key (id))"
 
-        self.vote_table = None
+        self.vote_table = "CREATE TABLE IF NOT EXISTS votes(" \
+                          "id INT(11) NOT NULL AUTO_INCREMENT, " \
+                          "user_id INT(11) NOT NULL," \
+                          "post_id INT(11) NOT NULL," \
+                          "value INT(11) NOT NULL," \
+                          "primary key (id))"
 
         self.cur.execute(self.post_table)
         self.cur.execute(self.comment_table)
         self.cur.execute(self.user_table)
+        self.cur.execute(self.vote_table)
 
     def get_user_account_by_id(self, id):
         query = "SELECT * FROM user WHERE id = (%s)"
@@ -62,8 +70,8 @@ class Database:
         self.con.commit()
 
     def insert_post(self, title: str, image: str):
-        query = "INSERT INTO post (title, image) VALUES (%s, %s)"
-        self.cur.execute(query, (title, image))
+        query = "INSERT INTO post (title, image, username) VALUES (%s, %s, %s)"
+        self.cur.execute(query, (title, image, g.user['username']))
         self.con.commit()
 
     def query_top_10_posts(self):
@@ -89,9 +97,9 @@ class Database:
         self.cur.execute(query, (vote_value, postid))
         self.con.commit()
 
-    def insert_comment(self, postid, comment):
-        query = "INSERT INTO comment (id, comment) VALUES (%s, %s)"
-        self.cur.execute(query, (postid, comment))
+    def insert_comment(self, postid, comment, username):
+        query = "INSERT INTO comment (id, comment, username) VALUES (%s, %s, %s)"
+        self.cur.execute(query, (postid, comment, username))
         self.con.commit()
 
     def get_posts_comments(self, postid):
@@ -99,3 +107,27 @@ class Database:
         self.cur.execute(query, (postid,))
         comments = self.cur.fetchall()
         return comments
+
+    def get_posts_votes(self, post_id):
+        query = "SELECT * FROM votes WHERE post_id = (%s)"
+        self.cur.execute(query, (post_id,))
+        votes = self.cur.fetchall()
+        return votes
+
+    def get_users_vote(self, post_id, user_id):
+        query = "SELECT * FROM votes WHERE post_id = (%s) AND user_id = (%s)"
+        print(query)
+        self.cur.execute(query, (post_id, user_id))
+        vote = self.cur.fetchone()
+        return vote
+        #returns none if havent voted or a dict if they have
+
+    def set_users_vote(self, post_id, user_id, val):
+        query = "UPDATE votes SET value = (%s) WHERE post_id = (%s) AND user_id = (%s)"
+        self.cur.execute(query, (val, post_id, user_id))
+        self.con.commit()
+
+    def add_vote(self, post_id, user_id, val):
+        query = "INSERT INTO votes (post_id, user_id, value) VALUES (%s, %s, %s)"
+        self.cur.execute(query, (post_id, user_id, val))
+        self.con.commit()

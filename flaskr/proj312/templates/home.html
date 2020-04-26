@@ -46,7 +46,7 @@
         console.log(msg);
 
         let newPost = "<li>\n" +
-            "                <h1>"+  msg.title  +"</h1>\n" +
+            "                <h1>"+  msg.title  +" - Posted by: "+msg.username+"</h1>\n" +
             "                <img src=\"/static/"+  msg.image  +"\" width=\"480\">\n" +
             "                <br><br>\n" +
             "<form onsubmit=\"vote( "+msg.id+" , 1);return false;\">\n" +
@@ -82,14 +82,13 @@
 
     socket.on('vote received', function(msg) {
         let voteCount = document.getElementById("vote"+msg.id);
-        voteCount.innerHTML = msg.vote;
-
-        console.log(msg);
+        let curCount = parseInt(voteCount.innerHTML);
+        voteCount.innerHTML = curCount + msg.vote;
     })
 
     socket.on('comment received', function(msg){
         let comments = document.getElementById("comments"+msg.id);
-        comments.innerHTML = "<h2>"+msg.comment+"</h2>"+comments.innerHTML
+        comments.innerHTML = "<h2>"+msg.username + ": " + msg.comment+"</h2>"+comments.innerHTML
 
     })
 
@@ -143,7 +142,7 @@ hr {
     <li>
         <a href="{{ url_for('log.logout') }}">Logout</a>
     </li>
-{% endif %}
+
 
 <hr>
 
@@ -177,7 +176,7 @@ hr {
     <ul id="posts">
         {% for post in posts %}
             <li>
-                <h1>{{post[0]['title']}}</h1>
+                <h1>{{post[0]['title']}} - Posted by: {{ post[0]['username'] }}</h1>
                 <img src="/static/{{post[0]['image']}}" width="480">
                 <br><br>
 
@@ -204,7 +203,7 @@ hr {
                 <div style="width: 480px" id="comments{{ post[0]['id'] }}">
                     {% for comment in post[1] %}
 
-                        <h2>{{ comment['comment'] }}</h2>
+                        <h2>{{ comment['username'] }}: {{ comment['comment'] }}</h2>
                     {% endfor %}
 
                 </div>
@@ -215,5 +214,6 @@ hr {
     </ul>
 </div>
 </div>
+{% endif %}
 </body>
 </html>

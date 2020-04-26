@@ -67,11 +67,13 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-
+    print("In load_logged_in_user")
     if user_id is None:
         g.user = None
     else:
+        print("good")
         g.user = db.get_user_account_by_id(user_id)
+        print(g.user)
 
 
 @bp.route('/logout')
