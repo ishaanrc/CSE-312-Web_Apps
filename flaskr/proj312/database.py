@@ -41,10 +41,17 @@ class Database:
                           "value INT(11) NOT NULL," \
                           "primary key (id))"
 
+        self.friend_table = "CREATE TABLE IF NOT EXISTS friends(" \
+                            "id INT(11) NOT NULL AUTO_INCREMENT," \
+                            "user_id INT(11) NOT NULL," \
+                            "friend_id INT(11) NOT NULL," \
+                            "primary key (id))"
+
         self.cur.execute(self.post_table)
         self.cur.execute(self.comment_table)
         self.cur.execute(self.user_table)
         self.cur.execute(self.vote_table)
+        self.cur.execute(self.friend_table)
 
     def get_user_account_by_id(self, id):
         query = "SELECT * FROM user WHERE id = (%s)"
@@ -130,4 +137,21 @@ class Database:
     def add_vote(self, post_id, user_id, val):
         query = "INSERT INTO votes (post_id, user_id, value) VALUES (%s, %s, %s)"
         self.cur.execute(query, (post_id, user_id, val))
+        self.con.commit()
+
+    def get_user_accounts_except_one(self, id_to_exclude):
+        query = "SELECT * FROM user WHERE id != (%s)"
+        self.cur.execute(query, (id_to_exclude, ))
+        users = self.cur.fetchall()
+        return users
+
+    def check_friendship(self, user_id, friend_id):
+        query = "SELECT * FROM friends WHERE user_id = (%s) and friend_id = (%s)"
+        self.cur.execute(query, (user_id, friend_id))
+        friend = self.cur.fetchone()
+        return friend
+
+    def add_friendship(self, user_id, friend_id):
+        query = "INSERT INTO friends (user_id, friend_id) VALUES (%s, %s)"
+        self.cur.execute(query, (user_id, friend_id))
         self.con.commit()

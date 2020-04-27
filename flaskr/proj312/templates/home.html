@@ -22,6 +22,10 @@
             socket.emit('vote', {"id": id, "val": val});
     }
 
+    function friend_request(id){
+        socket.emit('friend_request', {"id": id});
+    }
+
     function SendThisComment(id) {
         let commentBox = document.getElementById("comment"+id);
         let comment = commentBox.value;
@@ -95,6 +99,8 @@
 
 </script>
 
+
+
 <style>
 input {
   padding: 0.2em;
@@ -114,6 +120,31 @@ hr {
     margin-right: auto;
     border-style: solid;
     border-width: 2px;
+}
+/* #https://www.w3schools.com/howto/howto_js_collapsible.asp for below styling look and the script at the end*/
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
 }
 </style>
 
@@ -136,15 +167,34 @@ hr {
     </li>
 
 {% else %}
-    <li>
-        <a href="{{ url_for('friends.friends') }}">Friends    </a>
-    </li>
+
+    <button type="button" class="collapsible">View Friends</button>
+    <div class="content">
+        {% for friend in friends %}
+            <p>{{ friend['username'] }}</p>
+            {% if friend['friends'] == False %}
+                <form onsubmit="friend_request({{ friend['id'] }}, 1);return false;">
+                    <input type="Submit" value="Friend Request">
+                </form>
+            {% else %}
+                <form onsubmit="msgFriend({{ friend['id'] }});return false;">
+                    <label for="msg!">Send Message</label>
+                    <br>
+                    <input name="msg!" id="msg{{ friend['id'] }}" required>
+                    <br>
+                    <input type="Submit" value="send">
+                </form>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+
     <li>
         <a href="{{ url_for('log.logout') }}">Logout</a>
     </li>
 
 
-<hr>
+    <hr>
 
 
 <br />
@@ -215,5 +265,22 @@ hr {
 </div>
 </div>
 {% endif %}
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
 </body>
 </html>

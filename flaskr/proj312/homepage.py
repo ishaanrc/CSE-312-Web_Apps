@@ -23,16 +23,32 @@ def home():
 
     greeting_text = "Hello, Please Login"
     bool_logged_in = False
+    friends = []
     if g.user is not None:
         greeting_text = "Welcome, "+g.user['username']
         bool_logged_in = True
+        friends = db.get_user_accounts_except_one(g.user['id'])
+        check_all_friends_status(friends)
     return\
-        render_template('home.html', posts=new_list_of_dics, greeting_text=greeting_text, bool_logged_in=bool_logged_in)
+        render_template('home.html',
+                        posts=new_list_of_dics,
+                        greeting_text=greeting_text,
+                        bool_logged_in=bool_logged_in,
+                        friends=friends)
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@socketio.on('friend_request')
+def add_friendship(message):
+    if session['user_id'] is not None:
+        friends = db.check_friendship(session['user_id'], message['id'])
+        if friends is None:
+            db.add_friendship(session['user_id'], message['id'])
+        print(db.check_friendship(session['user_id'], message['id']))
 
 
 @socketio.on('post update')
@@ -119,3 +135,16 @@ def get_post_votes(post: dict):
     for vote in votes:
         vote_count += vote['value']
     post['votes'] = vote_count
+
+
+def check_all_friends_status(other_users):
+    my_id = session['user_id']
+    for user in other_users:
+        their_id = user['id']
+        me_friends_them = db.check_friendship(my_id, their_id)
+        them_friends_me = db.check_friendship(their_id, my_id)
+
+        if me_friends_them is not None and them_friends_me is not None:
+            user['friends'] = True
+        else:
+            user['friends'] = False
