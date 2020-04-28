@@ -27,9 +27,12 @@
     }
 
     function msgFriend(id){
+        console.log("chat"+id)
+        chatBox = document.getElementById("chat"+id);
         theTextBox = document.getElementById("msg"+id);
         let messageToSend = theTextBox.value;
         theTextBox.value="";
+        chatBox.innerHTML = chatBox.innerHTML + "<p>Me: "+messageToSend+"</p>";
         socket.emit('message', {"id": id, "message": messageToSend});
     }
 
@@ -101,6 +104,15 @@
         let comments = document.getElementById("comments"+msg.id);
         comments.innerHTML = "<h2>"+msg.username + ": " + msg.comment+"</h2>"+comments.innerHTML
 
+    })
+
+    socket.on('message received', function (msg) {
+        console.log(msg)
+        console.log("In message received")
+        let fromID = msg.from
+        chatBox = document.getElementById("chat"+fromID);
+        chatBox.innerHTML = chatBox.innerHTML + "<p>Them: "+msg.message+"</p>";
+        alert("New message from "+msg.fromUsername);
     })
 
 
@@ -178,26 +190,33 @@ hr {
     <button type="button" class="collapsible">View Friends</button>
     <div class="content">
         {% for friend in friends %}
-            <p>{{ friend['username'] }}</p>
-            {% if friend['friends'] == False %}
-                <form onsubmit="friend_request({{ friend['id'] }}, 1);return false;">
-                    <input type="Submit" value="Friend Request">
-                </form>
-            {% else %}
-                <form onsubmit="msgFriend({{ friend['id'] }});return false;">
-                    <label for="msg!">Send Message</label>
-                    <br>
-                    <input name="msg!" id="msg{{ friend['id'] }}" required>
-                    <br>
-                    <input type="Submit" value="send">
-                </form>
-            {% endif %}
+            <button type="button" class="collapsible">{{ friend['username'] }}</button>
+            <div class="content">
+                {% if friend['friends'] == False %}
+                    <form onsubmit="friend_request({{ friend['id'] }}, 1);return false;">
+                        <input type="Submit" value="Friend Request">
+                    </form>
+                {% else %}
+
+                    <form onsubmit="msgFriend({{ friend['id'] }});return false;">
+                        <label for="msg!">Send Message</label>
+                        <br>
+                        <input name="msg!" id="msg{{ friend['id'] }}" required>
+                        <br>
+                        <input type="Submit" value="send">
+                    </form>
+                    <h2>Chat Log</h2>
+                    <div id="chat{{ friend['id'] }}">
+                        {% for message in friend['our_messages'] %}
+                            <p>{{ message['username'] }}: {{ message['message'] }}</p>
+
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
         {% endfor %}
 
-        <h1>Message Feed</h1>
-        {% for message in messages %}
-            <h3>{{ message['username'] }}: {{ message['message'] }}</h3>
-        {% endfor %}
     </div>
 
 

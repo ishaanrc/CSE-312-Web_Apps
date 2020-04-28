@@ -176,3 +176,10 @@ class Database:
         self.cur.execute(query, (to_id,))
         messages = self.cur.fetchall()
         return messages
+
+    def get_messages_between_friends(self, id1, id2):
+        query = "SELECT * FROM message WHERE (to_id = (%s) AND from_id = (%s)) OR " \
+                "(to_id = (%s) AND from_id = (%s)) ORDER BY created ASC LIMIT 50 "
+        self.cur.execute(query, (id1,id2,id2,id1))
+        messages = self.cur.fetchall()
+        return messages

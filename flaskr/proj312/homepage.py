@@ -1,7 +1,7 @@
 import os
 
 from flask import (Blueprint, flash, render_template, request)
-from flask_socketio import emit
+from flask_socketio import emit, join_room, leave_room
 
 from proj312.log import login_required
 from . import socketio
@@ -30,19 +30,31 @@ def home():
         bool_logged_in = True
         friends = db.get_user_accounts_except_one(g.user['id'])
         check_all_friends_status(friends)
-        messages = db.get_users_recent_messages(g.user['id'])
 
     return render_template('home.html',
                            posts=new_list_of_dics,
                            greeting_text=greeting_text,
                            bool_logged_in=bool_logged_in,
-                           friends=friends,
-                           messages=messages)
+                           friends=friends)
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@socketio.on('connect')
+def test_connect():
+    print("joining room")
+    room = session['user_id']
+    join_room(room)
+
+
+@socketio.on('disconnect')
+def test_connect():
+    print("leaving room")
+    room = session['user_id']
+    leave_room(room)
 
 
 @socketio.on('friend_request')
@@ -90,7 +102,6 @@ def distribute_vote(message):
         #The *2 above corresponds to them "unvoting" and revoting the opposite value
 
 
-
 @socketio.on('comment')
 def distribute_comment(message):
     cur_user = db.get_user_account_by_id(session['user_id'])
@@ -109,6 +120,11 @@ def process_message(message):
         if db.check_friendship(session['user_id'], message['id']) and db.check_friendship(message['id'], session['user_id']):
             print(message)
             db.add_message(cur_user['username'], session['user_id'], message['id'], message['message'])
+            emit('message received', {'id': message['id'],
+                                      "message": message['message'],
+                                      'from': session['user_id'],
+                                      'fromUsername': cur_user['username']}, room=message['id'])
+            print("Made it here")
 
 
 @bp.route('/upload', methods=('GET', 'POST'))
@@ -157,5 +173,6 @@ def check_all_friends_status(other_users):
 
         if me_friends_them is not None and them_friends_me is not None:
             user['friends'] = True
+            user['our_messages'] = db.get_messages_between_friends(my_id, their_id)
         else:
             user['friends'] = False
