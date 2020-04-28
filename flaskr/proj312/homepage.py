@@ -24,17 +24,20 @@ def home():
     greeting_text = "Hello, Please Login"
     bool_logged_in = False
     friends = []
+    messages = []
     if g.user is not None:
         greeting_text = "Welcome, "+g.user['username']
         bool_logged_in = True
         friends = db.get_user_accounts_except_one(g.user['id'])
         check_all_friends_status(friends)
-    return\
-        render_template('home.html',
-                        posts=new_list_of_dics,
-                        greeting_text=greeting_text,
-                        bool_logged_in=bool_logged_in,
-                        friends=friends)
+        messages = db.get_users_recent_messages(g.user['id'])
+
+    return render_template('home.html',
+                           posts=new_list_of_dics,
+                           greeting_text=greeting_text,
+                           bool_logged_in=bool_logged_in,
+                           friends=friends,
+                           messages=messages)
 
 
 def allowed_file(filename):
@@ -88,7 +91,6 @@ def distribute_vote(message):
 
 
 
-
 @socketio.on('comment')
 def distribute_comment(message):
     cur_user = db.get_user_account_by_id(session['user_id'])
@@ -98,6 +100,15 @@ def distribute_comment(message):
     emit('comment received', {'id': message['id'],
                               "comment": message['comment'],
                               'username': cur_user['username']}, broadcast=True)
+
+
+@socketio.on('message')
+def process_message(message):
+    cur_user = db.get_user_account_by_id(session['user_id'])
+    if cur_user is not None:
+        if db.check_friendship(session['user_id'], message['id']) and db.check_friendship(message['id'], session['user_id']):
+            print(message)
+            db.add_message(cur_user['username'], session['user_id'], message['id'], message['message'])
 
 
 @bp.route('/upload', methods=('GET', 'POST'))

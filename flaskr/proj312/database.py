@@ -22,6 +22,15 @@ class Database:
                           "username VARCHAR(80) NOT NULL," \
                           "primary key (id))"
 
+        self.message_table = "CREATE TABLE IF NOT EXISTS message(" \
+                             "username VARCHAR(80) NOT NULL," \
+                             "id INT(11) NOT NULL AUTO_INCREMENT," \
+                             "from_id INT(11) NOT NULL," \
+                             "to_id INT(11) NOT NULL," \
+                             "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " \
+                             "message VARCHAR(1000)," \
+                             "primary key (id))"
+
         self.comment_table = "CREATE TABLE IF NOT EXISTS comment(" \
                              "id INT(11) NOT NULL, " \
                              "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP," \
@@ -48,6 +57,7 @@ class Database:
                             "primary key (id))"
 
         self.cur.execute(self.post_table)
+        self.cur.execute(self.message_table)
         self.cur.execute(self.comment_table)
         self.cur.execute(self.user_table)
         self.cur.execute(self.vote_table)
@@ -155,3 +165,14 @@ class Database:
         query = "INSERT INTO friends (user_id, friend_id) VALUES (%s, %s)"
         self.cur.execute(query, (user_id, friend_id))
         self.con.commit()
+
+    def add_message(self, from_username, from_id, to_id, message):
+        query = "INSERT INTO message (username, from_id, to_id, message) VALUES (%s, %s, %s, %s)"
+        self.cur.execute(query, (from_username, from_id, to_id, message))
+        self.con.commit()
+
+    def get_users_recent_messages(self, to_id):
+        query = "SELECT * FROM message WHERE to_id = (%s) ORDER BY created ASC LIMIT 50 "
+        self.cur.execute(query, (to_id,))
+        messages = self.cur.fetchall()
+        return messages

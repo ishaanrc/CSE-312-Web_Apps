@@ -26,6 +26,13 @@
         socket.emit('friend_request', {"id": id});
     }
 
+    function msgFriend(id){
+        theTextBox = document.getElementById("msg"+id);
+        let messageToSend = theTextBox.value;
+        theTextBox.value="";
+        socket.emit('message', {"id": id, "message": messageToSend});
+    }
+
     function SendThisComment(id) {
         let commentBox = document.getElementById("comment"+id);
         let comment = commentBox.value;
@@ -185,6 +192,11 @@ hr {
                     <input type="Submit" value="send">
                 </form>
             {% endif %}
+        {% endfor %}
+
+        <h1>Message Feed</h1>
+        {% for message in messages %}
+            <h3>{{ message['username'] }}: {{ message['message'] }}</h3>
         {% endfor %}
     </div>
 
