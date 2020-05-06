@@ -6,10 +6,10 @@ from flask import g
 
 class Database:
     def __init__(self):
-        self.con = pymysql.connect(host='localhost',
+        self.con = pymysql.connect(host='db',
                                    user='root',
-                                   password='sesame24',
-                                   db='db',
+                                   password=os.getenv('MYSQL_PASSWORD'),
+                                   db='database',
                                    charset='utf8mb4',
                                    cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.con.cursor()
@@ -55,7 +55,7 @@ class Database:
                             "user_id INT(11) NOT NULL," \
                             "friend_id INT(11) NOT NULL," \
                             "primary key (id))"
-
+        print("Creating tables")
         self.cur.execute(self.post_table)
         self.cur.execute(self.message_table)
         self.cur.execute(self.comment_table)
