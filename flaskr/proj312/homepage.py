@@ -45,86 +45,93 @@ def allowed_file(filename):
 
 @socketio.on('connect')
 def test_connect():
-    print("joining room")
-    room = session['user_id']
-    join_room(room)
+    if session.get('user_id') is not None:
+        print(session['user_id'])
+        print("joining room")
+        room = session['user_id']
+        join_room(room)
 
 
 @socketio.on('disconnect')
-def test_connect():
-    print("leaving room")
-    room = session['user_id']
-    leave_room(room)
+def test_disconnect():
+    if session.get('user_id') is not None:
+        print("leaving room")
+        room = session['user_id']
+        leave_room(room)
 
 
 @socketio.on('friend_request')
 def add_friendship(message):
-    if session['user_id'] is not None:
-        friends = db.check_friendship(session['user_id'], message['id'])
-        if friends is None:
-            db.add_friendship(session['user_id'], message['id'])
-        print(db.check_friendship(session['user_id'], message['id']))
+    if session.get('user_id') is not None:
+            friends = db.check_friendship(session['user_id'], message['id'])
+            if friends is None:
+                db.add_friendship(session['user_id'], message['id'])
+            print(db.check_friendship(session['user_id'], message['id']))
 
 
 @socketio.on('post update')
 def distribute_post(message):
-    this_post = db.query_top_post()
-    cur_user = db.get_user_account_by_id(session['user_id'])
-    emit('update received', {'id': str(this_post['id']),
-                             'title': this_post['title'],
-                             'image': this_post['image'],
-                             'username': cur_user['username'],
-                             "votes": str(0)}, broadcast=True)
+    if session.get('user_id') is not None:
+        this_post = db.query_top_post()
+        cur_user = db.get_user_account_by_id(session['user_id'])
+        emit('update received', {'id': str(this_post['id']),
+                                 'title': this_post['title'],
+                                 'image': this_post['image'],
+                                 'username': cur_user['username'],
+                                 "votes": str(0)}, broadcast=True)
 
 
 @socketio.on('vote')
 def distribute_vote(message):
-    print(message)
-    cur_user = db.get_user_account_by_id(session['user_id'])
-    print(cur_user)
+    if session.get('user_id') is not None:
+        print(message)
+        cur_user = db.get_user_account_by_id(session['user_id'])
+        print(cur_user)
 
-    current_vote = db.get_users_vote(message['id'], cur_user['id'])
-    print(current_vote)
+        current_vote = db.get_users_vote(message['id'], cur_user['id'])
+        print(current_vote)
 
-    if current_vote is None:
-        db.add_vote(message['id'], cur_user['id'], message['val'])
-        #Add their particular vote to vote table, tell everyone inc or dec by one
-        emit('vote received', {'id': message['id'],
-                               "vote": message['val']}, broadcast=True)
-    elif current_vote['value'] == message['val']:
-        #Corresponds to them trying to upvote/downvote a second time, not allowed so do nothing
-        pass
-    else:
-        db.set_users_vote(message['id'], cur_user['id'], message['val'])
+        if current_vote is None:
+            db.add_vote(message['id'], cur_user['id'], message['val'])
+            #Add their particular vote to vote table, tell everyone inc or dec by one
+            emit('vote received', {'id': message['id'],
+                                   "vote": message['val']}, broadcast=True)
+        elif current_vote['value'] == message['val']:
+            #Corresponds to them trying to upvote/downvote a second time, not allowed so do nothing
+            pass
+        else:
+            db.set_users_vote(message['id'], cur_user['id'], message['val'])
 
-        emit('vote received', {'id': message['id'],
-                               "vote": message['val']*2}, broadcast=True)
-        #The *2 above corresponds to them "unvoting" and revoting the opposite value
+            emit('vote received', {'id': message['id'],
+                                   "vote": message['val']*2}, broadcast=True)
+            #The *2 above corresponds to them "unvoting" and revoting the opposite value
 
 
 @socketio.on('comment')
 def distribute_comment(message):
-    cur_user = db.get_user_account_by_id(session['user_id'])
+    if session.get('user_id') is not None:
+        cur_user = db.get_user_account_by_id(session['user_id'])
 
-    db.insert_comment(message['id'], message['comment'], cur_user['username'])
-    print(message['id'], message['comment'])
-    emit('comment received', {'id': message['id'],
-                              "comment": message['comment'],
-                              'username': cur_user['username']}, broadcast=True)
+        db.insert_comment(message['id'], message['comment'], cur_user['username'])
+        print(message['id'], message['comment'])
+        emit('comment received', {'id': message['id'],
+                                  "comment": message['comment'],
+                                  'username': cur_user['username']}, broadcast=True)
 
 
 @socketio.on('message')
 def process_message(message):
-    cur_user = db.get_user_account_by_id(session['user_id'])
-    if cur_user is not None:
-        if db.check_friendship(session['user_id'], message['id']) and db.check_friendship(message['id'], session['user_id']):
-            print(message)
-            db.add_message(cur_user['username'], session['user_id'], message['id'], message['message'])
-            emit('message received', {'id': message['id'],
-                                      "message": message['message'],
-                                      'from': session['user_id'],
-                                      'fromUsername': cur_user['username']}, room=message['id'])
-            print("Made it here")
+    if session.get('user_id') is not None:
+        cur_user = db.get_user_account_by_id(session['user_id'])
+        if cur_user is not None:
+            if db.check_friendship(session['user_id'], message['id']) and db.check_friendship(message['id'], session['user_id']):
+                print(message)
+                db.add_message(cur_user['username'], session['user_id'], message['id'], message['message'])
+                emit('message received', {'id': message['id'],
+                                          "message": message['message'],
+                                          'from': session['user_id'],
+                                          'fromUsername': cur_user['username']}, room=message['id'])
+                print("Made it here")
 
 
 @bp.route('/upload', methods=('GET', 'POST'))
