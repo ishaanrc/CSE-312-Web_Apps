@@ -1,5 +1,5 @@
 Flask==1.0.2
 Flask-SocketIO==4.2.1
 PyMySql==0.9.3
-eventlet==0.25.2
+eventlet==0.31.0
 passlib==1.7.2
